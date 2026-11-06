@@ -22,3 +22,6 @@ coverage/
 Thumbs.db
 .idea/
 .vscode/
+.superpowers/
+.worktrees/
+*.egg-info/

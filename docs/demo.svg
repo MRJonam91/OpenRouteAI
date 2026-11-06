@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-label="One endpoint routes a chat request to a local model">
+  <style>
+    text { font-family: Segoe UI, Arial, sans-serif; fill: #e9f7f2; }
+    .muted { fill: #93b6ae; }
+    .problem { animation: fade-out 5s infinite; }
+    .answer { animation: fade-in 5s infinite; }
+    .blink { animation: pulse 5s infinite; }
+    @keyframes fade-out { 0%,28% { opacity: 1; } 44%,92% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes fade-in { 0%,30% { opacity: 0; } 46%,92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes pulse { 0%,47% { opacity: .2; } 62%,85% { opacity: 1; } 100% { opacity: .2; } }
+  </style>
+  <rect width="900" height="300" rx="18" fill="#071d1a"/>
+  <rect x="1" y="1" width="898" height="298" rx="17" fill="none" stroke="#2a5b50"/>
+  <text x="38" y="47" font-size="19" font-weight="700" fill="#78ddbb">OpenRouteAI</text>
+  <text x="862" y="47" font-size="13" class="muted" text-anchor="end">ONE API · LOCAL MODELS</text>
+  <g class="problem">
+    <text x="450" y="98" font-size="23" text-anchor="middle">Different models. Different integrations.</text>
+    <rect x="65" y="128" width="198" height="84" rx="13" fill="#173830" stroke="#508376"/>
+    <text x="164" y="161" font-size="18" text-anchor="middle">Your app</text>
+    <text x="164" y="184" font-size="12" text-anchor="middle" class="muted">3 SDKs · 3 configs</text>
+    <path d="M263 150 H626 M263 171 H626 M263 192 H626" fill="none" stroke="#d58a70" stroke-width="2" stroke-dasharray="7 6"/>
+    <rect x="630" y="132" width="200" height="28" rx="7" fill="#5b3731"/>
+    <rect x="630" y="163" width="200" height="28" rx="7" fill="#5b3731"/>
+    <rect x="630" y="194" width="200" height="28" rx="7" fill="#5b3731"/>
+    <text x="730" y="151" font-size="12" text-anchor="middle">Provider A</text>
+    <text x="730" y="182" font-size="12" text-anchor="middle">Provider B</text>
+    <text x="730" y="213" font-size="12" text-anchor="middle">Provider C</text>
+  </g>
+  <g class="answer">
+    <text x="450" y="98" font-size="23" text-anchor="middle">One endpoint. Local answer.</text>
+    <rect x="54" y="128" width="200" height="84" rx="13" fill="#173830" stroke="#508376"/>
+    <text x="154" y="161" font-size="17" text-anchor="middle">OpenAI SDK</text>
+    <text x="154" y="184" font-size="12" text-anchor="middle" class="muted">model="auto"</text>
+    <path d="M254 170 H338 M574 170 H661" stroke="#78ddbb" stroke-width="3"/>
+    <path d="M338 170 l-11 -7 v14 z M661 170 l-11 -7 v14 z" fill="#78ddbb"/>
+    <rect x="340" y="115" width="234" height="108" rx="14" fill="#175b49" stroke="#78ddbb" stroke-width="2"/>
+    <text x="457" y="155" font-size="17" font-weight="700" text-anchor="middle">localhost:4000/v1</text>
+    <text x="457" y="184" font-size="13" text-anchor="middle">OpenRouteAI</text>
+    <rect x="663" y="128" width="177" height="84" rx="13" fill="#173830" stroke="#508376"/>
+    <text x="751" y="161" font-size="17" text-anchor="middle">Ollama</text>
+    <text x="751" y="184" font-size="12" text-anchor="middle" class="muted">local chat model</text>
+    <text x="450" y="261" font-size="14" text-anchor="middle" class="blink">No remote route in this alpha</text>
+  </g>
+</svg>

@@ -1,47 +1,61 @@
 # OpenRouteAI
 
-OpenRouteAI is a local-first, privacy-first AI gateway: one OpenAI-compatible API for local and cloud models, designed to work usefully even when offline.
+[Italiano](README.it.md) · English
 
-## Product direction
+![Five-second demo: several integrations become one local endpoint](docs/demo.svg)
 
-- **One endpoint:** existing OpenAI SDK clients point at the gateway.
-- **Local by default:** discover and prefer configured local providers such as Ollama.
-- **Deliberate cloud escalation:** use a cloud provider only when a routing policy permits it.
-- **Private by design:** redact or avoid sensitive request logging; no telemetry by default.
-- **Zero-friction start:** a useful configuration should work with a local provider and minimal setup.
+One OpenAI-compatible endpoint for local AI. Alpha `0.1.0a1` routes text chat to Ollama and, if configured, another local OpenAI-compatible server. The gateway has no remote provider route and does not persist prompts or responses.
 
-This is intentionally not a generic LiteLLM clone. The differentiator is an opinionated local/offline baseline, with cloud capability as an explicit extension.
+## Quick start
 
-## Status
+Requires Python 3.11+, [Ollama](https://ollama.com/) running locally, and an installed chat model. For a small first model, [Ollama lists `llama3.2:1b`](https://ollama.com/library/llama3.2).
 
-Planning scaffold. No runtime implementation exists yet. See [`docs/`](docs/) for the product brief, architecture baseline, decisions, and staged delivery plan.
+```bash
+ollama pull llama3.2:1b
+python -m venv .venv
+# Activate .venv: PowerShell .\.venv\Scripts\Activate.ps1; Unix: source .venv/bin/activate
+python -m pip install -e .
+openrouteai doctor
+openrouteai serve
+```
 
-## Intended quick start
+In another terminal, install the OpenAI SDK with `python -m pip install openai` and call:
 
 ```python
 from openai import OpenAI
 
-client = OpenAI(base_url="http://localhost:4000/v1", api_key="local")
-response = client.chat.completions.create(
+client = OpenAI(base_url="http://127.0.0.1:4000/v1", api_key="local")
+reply = client.chat.completions.create(
     model="auto",
     messages=[{"role": "user", "content": "Ciao"}],
 )
+print(reply.choices[0].message.content)
 ```
 
-`auto` is a gateway routing alias, not a model supplied by an upstream provider.
+The SDK requires a nonempty key. The loopback gateway does not authenticate it. Keep the gateway bound to loopback.
 
-## Repository map
+## Alpha contract
 
-- [`docs/product-brief.md`](docs/product-brief.md) — audience, scope and success measures.
-- [`docs/architecture.md`](docs/architecture.md) — proposed MVP boundaries and data flow.
-- [`docs/decisions/`](docs/decisions/) — ADRs; record choices before they become implicit.
-- [`docs/roadmap.md`](docs/roadmap.md) — delivery slices and acceptance criteria.
-- [`docs/research/`](docs/research/) — provider/API compatibility evidence and comparisons.
+- `POST /v1/chat/completions`: non-streaming text messages with `system`, `user`, or `assistant` roles; optional `temperature`, `top_p`, and `max_tokens`.
+- `model="auto"`: discovers chat-capable Ollama models through `/api/tags` and `/api/show`, then optionally a local OpenAI-compatible server. It retries at most one other local candidate after a transient failure.
+- Explicit model names use `ollama/<model>` or `local/<model>`. Set `OPENROUTEAI_MODEL` to one of these IDs to give it priority for `auto`.
+- `GET /v1/models`, `GET /health`, and `openrouteai doctor`.
+- Unsupported fields return an OpenAI-shaped error. Streaming, tools, embeddings, cloud, cache, dashboard, rate limits, and MCP are [later work](docs/roadmap.md).
 
-## Working agreements
+To add a second local server, set `OPENROUTEAI_LOCAL_BASE_URL=http://127.0.0.1:1234/v1` in the gateway process environment. The server must expose compatible `/v1/models` and `/v1/chat/completions` endpoints. `.env.example` is a reference file, not loaded automatically.
 
-1. Keep the OpenAI-compatible surface intentionally small at first; add endpoints only with contract tests.
-2. Treat prompt, response, and credential handling as privacy-sensitive data flows.
-3. Every routing decision must be explainable without retaining raw user content by default.
-4. Validate offline operation in CI-like local tests before adding cloud conveniences.
-5. Capture consequential decisions in an ADR.
+## Privacy and offline use
+
+The gateway binds to loopback, connects only to configured HTTP loopback origins, ignores proxy environment variables for provider requests, and prints no prompt, reply, or authorization header. It excludes Ollama names ending in `:cloud`. A local server can itself relay to the Internet; OpenRouteAI cannot certify its internal behavior. For strict offline Ollama use, set `OLLAMA_NO_CLOUD=1` in the **Ollama process** and restart it, as [Ollama documents](https://docs.ollama.com/faq#how-do-i-disable-ollama-cloud-features).
+
+## Contribute
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and [the architecture](docs/architecture.md). Run `python -m pip install -e '.[test]'` and `python -m pytest -q -p no:cacheprovider`. Production Python stays below 1,500 physical lines, enforced by CI. Update the Italian version of any changed public document.
+
+## License and support
+
+Copyright © 2026 MRJonam91. Source is [AGPL-3.0-only](LICENSE). Separate commercial terms can be negotiated for code the copyright holder owns or is authorized to relicense; [contribution policy](CONTRIBUTING.md) explains the consequence for community code. An opaque package fingerprint and Git release tag help identify this release, but public identifiers are not secrets or reliable copy protection.
+
+Support links: [GitHub Sponsors](https://github.com/sponsors/MRJonam91) · [Ko-fi](https://ko-fi.com/mrjonam) · [Buy Me a Coffee](https://www.buymeacoffee.com/mrjonam) · [PayPal](https://paypal.me/manorollo). No Open Collective account is configured. Availability of payment profiles has not been independently confirmed.
+
+[Product brief](docs/product-brief.md) · [Architecture](docs/architecture.md) · [Roadmap](docs/roadmap.md) · [API research](docs/research/alpha-contract.md).

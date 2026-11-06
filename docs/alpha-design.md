@@ -1,0 +1,9 @@
+# Alpha design / Progetto alfa
+
+Italiano: OpenRouteAI 0.1.0a1 espone un sottoinsieme testuale non streaming di Chat Completions, `GET /v1/models` e `GET /health`. Scopre Ollama e, se configurato, un server locale OpenAI-compatible. `auto` prova prima Ollama, poi un solo candidato locale alternativo dopo errori transitori. Ogni URL di provider e l'indirizzo del server devono essere loopback. Nessun contenuto o credenziale viene registrato. Il core resta sotto 1.500 righe. Il client usa una sola URL; i nomi espliciti sono `ollama/<modello>` o `local/<modello>`.
+
+English: OpenRouteAI 0.1.0a1 exposes a non-streaming, text-only Chat Completions subset, `GET /v1/models`, and `GET /health`. It discovers Ollama and an optional loopback OpenAI-compatible server. `auto` tries Ollama first, then at most one other local candidate after transient errors. Provider URLs and the server bind address must be loopback. No content or credentials are logged. Production core stays below 1,500 lines. Clients use one base URL; explicit model names are `ollama/<model>` or `local/<model>`.
+
+Italiano: errori di validazione, modelli sconosciuti, provider non disponibili e parametri non supportati restituiscono JSON nel formato OpenAI senza dettagli sensibili. Il fallback non cambia provider per una richiesta con modello esplicito. L'alfa non offre cloud, streaming, tool, cache, dashboard, rate limit o MCP. Ollama può comunque usare cloud internamente: per uso rigorosamente offline va disabilitato nel server Ollama.
+
+English: validation failures, unknown models, unavailable providers, and unsupported parameters return OpenAI-shaped JSON without sensitive detail. Fallback never changes provider for an explicit model request. This alpha has no cloud, streaming, tools, cache, dashboard, rate limiting, or MCP. Ollama can still use cloud internally: strict offline use requires disabling cloud in the Ollama server.
